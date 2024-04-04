@@ -1,0 +1,22 @@
+{
+    "deploy": [
+        "../deploy.md"
+    ],
+    "docs": "",
+    "features": [
+        "Dual-core",
+        "External Flash",
+        "USB"
+        "JST-SH",
+        "RGB LED",
+        "USB-C"
+    ],
+    "images": [
+        "IMG_0571-scaled.jpg"
+    ],
+    "mcu": "rp2040",
+    "product": "PicUNO",
+    "thumbnail": "",
+    "url": "https://atrivatech.com/PicUNO",
+    "vendor": "AtrivaTECH"
+}
