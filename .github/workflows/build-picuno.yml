@@ -3,8 +3,10 @@ name: Build PicUNO RP2040 Firmware
 on:
   push:
     branches: [ picuno-support, master ]
-  pull_request:
-    branches: [ picuno-support, master ]
+    paths:
+      - 'ports/rp2/boards/PICUNO_RP2040/**'
+      - '.github/workflows/build-picuno.yml'
+      - 'ports/rp2/**'
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * 0'
