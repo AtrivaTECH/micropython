@@ -1,0 +1,20 @@
+{
+    "deploy": [
+        "../deploy.md"
+    ],
+    "docs": "",
+    "features": [
+        "8MB Flash",
+        "USB-C",
+        "Arduino UNO Form Factor",
+        "Neopixel"
+    ],
+    "images": [
+        "picuno_rp2040.jpg"
+    ],
+    "mcu": "rp2040",
+    "product": "PicUNO RP2040",
+    "thumbnail": "",
+    "url": "https://atrivatech.com/picuno-rp2040",
+    "vendor": "AtrivaTECH"
+}
