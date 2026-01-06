@@ -1,0 +1,71 @@
+name: Build PicUNO RP2040 Firmware
+
+on:
+  push:
+    branches: [ picuno-support, master ]
+  pull_request:
+    branches: [ picuno-support, master ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  build-micropython:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: false
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install ARM GCC
+      run: |
+        sudo apt-get update
+        wget https://developer.arm.com/-/media/Files/downloads/gnu/14.2.rel1/binrel/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz
+        sudo tar xf arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi.tar.xz -C /opt/
+        echo "/opt/arm-gnu-toolchain-14.2.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
+    
+    - name: Install build dependencies
+      run: |
+        sudo apt-get install -y cmake ninja-build
+    
+    - name: Build mpy-cross
+      run: make -C mpy-cross
+    
+    - name: Fetch submodules for RP2
+      run: |
+        cd ports/rp2
+        make BOARD=PICUNO_RP2040 submodules
+    
+    - name: Build PicUNO RP2040 firmware
+      run: |
+        cd ports/rp2
+        make BOARD=PICUNO_RP2040
+    
+    - name: Get version info
+      id: version
+      run: |
+        echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+    
+    - name: Upload firmware
+      uses: actions/upload-artifact@v4
+      with:
+        name: micropython-picuno_rp2040-${{ steps.version.outputs.date }}-${{ steps.version.outputs.sha_short }}
+        path: ports/rp2/build-PICUNO_RP2040/firmware.uf2
+        retention-days: 90
+    
+    - name: Create Release (on tag)
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ports/rp2/build-PICUNO_RP2040/firmware.uf2
+        name: MicroPython for PicUNO RP2040 ${{ github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
